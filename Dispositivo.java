@@ -81,21 +81,47 @@ public class Dispositivo {
     
     
     // Método para guardar el dispositivo en el archivo
-    public int save() {
-        try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "rw")) {
-            raf.seek(raf.length()); // Ir al final del archivo
-            raf.writeInt(id);
-            raf.writeUTF(String.format("%-20s", marca));
-            raf.writeUTF(String.format("%-20s", modelo));
-            raf.writeBoolean(estado);
-            raf.writeInt(tipo);
-            raf.writeBoolean(borrado);
-            raf.writeInt(idAjeno);
-            return 0; // Éxito
-        } catch (IOException e) {
-            return 1; // Error
+// Método para actualizar o guardar el dispositivo en el archivo
+public int save() {
+    try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "rw")) {
+        while (raf.getFilePointer() < raf.length()) {
+            long pos = raf.getFilePointer(); // Guardamos la posición inicial
+            int idLeido = raf.readInt();
+            raf.readUTF(); // Marca
+            raf.readUTF(); // Modelo
+            raf.readBoolean(); // Estado
+            raf.readInt(); // Tipo
+            raf.readBoolean(); // Borrado
+            raf.readInt(); // idAjeno
+
+            if (idLeido == this.id) { // Si encontramos el mismo ID, actualizamos
+                raf.seek(pos); // Volvemos a la posición inicial para sobrescribir
+                raf.writeInt(id);
+                raf.writeUTF(String.format("%-20s", marca));
+                raf.writeUTF(String.format("%-20s", modelo));
+                raf.writeBoolean(estado);
+                raf.writeInt(tipo);
+                raf.writeBoolean(borrado);
+                raf.writeInt(idAjeno);
+                return 0; // Éxito
+            }
         }
+
+        // Si no se encontró, lo añadimos al final (nuevo dispositivo)
+        raf.seek(raf.length());
+        raf.writeInt(id);
+        raf.writeUTF(String.format("%-20s", marca));
+        raf.writeUTF(String.format("%-20s", modelo));
+        raf.writeBoolean(estado);
+        raf.writeInt(tipo);
+        raf.writeBoolean(borrado);
+        raf.writeInt(idAjeno);
+        return 0; // Éxito
+    } catch (IOException e) {
+        return 1; // Error
     }
+}
+
     
     // Método para cargar un dispositivo desde el archivo
     public int load(int idBuscado) {

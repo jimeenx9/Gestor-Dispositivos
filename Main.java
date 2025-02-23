@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -41,45 +42,50 @@ public class Main {
         } while (opcion != 0);
     }
 
-    private static void cargarDatos() {
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println("Cargando dispositivos desde ficheros...");
-        try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "r")) {
-            while (raf.getFilePointer() < raf.length()) {
-                int id = raf.readInt();
-                String marca = raf.readUTF().trim();
-                String modelo = raf.readUTF().trim();
-                boolean estado = raf.readBoolean();
-                int tipo = raf.readInt();
-                boolean borrado = raf.readBoolean();
-                int idAjeno = raf.readInt();
-    
-                if (!borrado) {
-                    Dispositivo d;
-                    if (tipo == 1) { 
-                        d = new Ordenador(id);
-                        d.load(id);
-                    } else if (tipo == 2) { 
-                        d = new Impresora(id);
-                        d.load(id);
-                    } else { 
-                        d = new Dispositivo(id);
-                    }
-                    System.out.println();
-                    d.setMarca(marca);
-                    d.setModelo(modelo);
-                    d.setEstado(estado);
-                    d.setIdAjeno(idAjeno);
-    
-                    listaDispositivos.add(d);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("No se encontraron dispositivos guardados.");
-        }
+private static void cargarDatos() {
+    listaDispositivos.clear(); // Limpiar la lista antes de cargar
+
+    File archivo = new File("dispositivos.dat");
+    if (!archivo.exists()) {
+        System.out.println("No hay dispositivos guardados.");
+        return;
     }
+
+    try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "r")) {
+        while (raf.getFilePointer() < raf.length()) {
+            int id = raf.readInt();
+            String marca = raf.readUTF().trim();
+            String modelo = raf.readUTF().trim();
+            boolean estado = raf.readBoolean();
+            int tipo = raf.readInt();
+            boolean borrado = raf.readBoolean();
+            int idAjeno = raf.readInt();
+
+            if (!borrado) { // Solo cargamos dispositivos que no han sido eliminados
+                Dispositivo d;
+                if (tipo == 1) { 
+                    d = new Ordenador(id);
+                    d.load(id);
+                } else if (tipo == 2) { 
+                    d = new Impresora(id);
+                    d.load(id);
+                } else { 
+                    d = new Dispositivo(id);
+                }
+
+                d.setMarca(marca);
+                d.setModelo(modelo);
+                d.setEstado(estado);
+                d.setIdAjeno(idAjeno);
+
+                listaDispositivos.add(d);
+            }
+        }
+    } catch (IOException e) {
+        System.out.println("Error al cargar dispositivos.");
+    }
+}
+
     
 
     private static void añadirDispositivo() {
@@ -161,17 +167,16 @@ public class Main {
         System.out.println("IDs Disponibles en la lista de los Dispositivos:");
         
         for (Dispositivo d : listaDispositivos) {
-            System.out.println();
             System.out.println("ID: " + d.getId() + ", Marca: " + d.getMarca());
         }
 
         for (Dispositivo d : listaDispositivos) {
             if (d.getId() == id) {
-                System.out.println();
                 System.out.println(d.toString().replace(". ", "\n"));
                 return;
             }
         }
+        System.out.println();
         System.out.println("El dispositivo que buscabas no se ha encontrado.");
     }
     

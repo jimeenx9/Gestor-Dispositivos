@@ -32,10 +32,10 @@ public class Impresora extends Dispositivo {
     // toString sobreescrito
     @Override
     public String toString() {
-        return super.toString() + ". Tipo: " + (tipo == 0 ? "Láser" : tipo == 1 ? "Inyección de tinta" : "Otros") +
-                ". Color: " + (color ? "Sí" : "No") + ". Scanner incluido: " + (tieneScanner ? "Sí" : "No");
+        return "ID IMPRESORA: " + getId() + "\n" + super.toString() + "\nTipo: " + (tipo == 0 ? "Láser" : tipo == 1 ? "Inyección de tinta" : "Otros") +
+               "\nColor: " + (color ? "Sí" : "No") + "\nScanner incluido: " + (tieneScanner ? "Sí" : "No");
     }
-
+    
     // Método para guardar la impresora en el archivo
     @Override
     public int save() {

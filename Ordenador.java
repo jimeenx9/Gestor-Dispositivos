@@ -37,8 +37,10 @@ public class Ordenador extends Dispositivo {
     // toString sobreescrito
     @Override
     public String toString() {
-        return super.toString() + ". Procesador: " + procesador + ". Memoria RAM: " + ram + " GB. Almacenamiento: " + (tipoDisco == 0 ? "HDD " : tipoDisco == 1 ? "SSD " : tipoDisco == 2 ? "NVMe " : "Otros ") + tamDisco + " GB";
+        return "ID ORDENADOR: " + getId() + "\n" + super.toString() + "\nProcesador: " + procesador + "\nMemoria RAM: " + ram + " GB\nAlmacenamiento: " +
+               (tipoDisco == 0 ? "HDD " : tipoDisco == 1 ? "SSD " : tipoDisco == 2 ? "NVMe " : "Otros ") + tamDisco + " GB";
     }
+    
 
     // Método para guardar el ordenador en el archivo
     @Override

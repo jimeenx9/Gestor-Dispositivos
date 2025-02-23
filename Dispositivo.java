@@ -51,8 +51,9 @@ public class Dispositivo {
     // toString
     @Override
     public String toString() {
-        return "Marca: " + marca + ". Modelo: " + modelo + ". Estado: " + (estado ? "funciona" : "no funciona");
+        return "\nMarca: " + marca + "\nModelo: " + modelo + "\nEstado: " + (estado ? "Funciona" : "No funciona");
     }
+    
     
     // Método para obtener el nuevo ID sumando 1 al mayor existente
     protected static int obtenerNuevoId() {
@@ -152,22 +153,32 @@ public int save() {
         return 1; // No encontrado
     }
     
-    // Método para eliminar un dispositivo (marcar como borrado)
-    public int delete() {
-        try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "rw")) {
-            while (raf.getFilePointer() < raf.length()) {
-                long pos = raf.getFilePointer();
-                int idLeido = raf.readInt();
-                raf.seek(pos + 40); // Saltamos al campo borrado
-                if (idLeido == this.id) {
-                    raf.writeBoolean(true);
-                    this.borrado = true;
-                    return 0; // Éxito
-                }
+// Método para eliminar físicamente un dispositivo del archivo sin afectar a los demás
+public int delete() {
+    try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "rw")) {
+        while (raf.getFilePointer() < raf.length()) {
+            int idLeido = raf.readInt();
+            raf.readUTF(); // Marca
+            raf.readUTF(); // Modelo
+            raf.readBoolean(); // Estado
+            raf.readInt(); // Tipo
+            long posBorrado = raf.getFilePointer(); // Posición donde está el campo borrado
+            boolean borradoLeido = raf.readBoolean(); // Leer si está borrado
+            raf.readInt(); // idAjeno
+
+            if (idLeido == this.id && !borradoLeido) {
+                raf.seek(posBorrado); // Volvemos a la posición del campo borrado
+                raf.writeBoolean(true); // Marcamos como borrado
+                this.borrado = true;
+                System.out.println("Dispositivo con ID " + this.id + " marcado como borrado.");
+                return 0; // Éxito
             }
-        } catch (IOException e) {
-            return 1; // Error
         }
-        return 1; // No encontrado
+    } catch (IOException e) {
+        System.out.println("Error al eliminar el dispositivo: " + e.getMessage());
+        return 1; // Error
     }
+    return 1; // No encontrado
+}
+
 }

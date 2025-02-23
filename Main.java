@@ -98,7 +98,9 @@ public class Main {
             System.out.println("No hay dispositivos registrados.");
         } else {
             for (Dispositivo d : listaDispositivos) {
-                System.out.println(d);
+                System.out.println(d.toString().replace(". ", "\n"));
+                System.out.println();
+
             }
         }
     }
@@ -109,7 +111,9 @@ public class Main {
         scanner.nextLine();
         for (Dispositivo d : listaDispositivos) {
             if (d.getId() == id) {
-                System.out.println(d);
+                System.out.println(d.toString().replace(". ", "\n"));
+                System.out.println();
+
                 return;
             }
         }

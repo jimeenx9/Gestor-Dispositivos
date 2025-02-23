@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -40,6 +42,40 @@ public class Main {
 
     private static void cargarDatos() {
         System.out.println("Cargando dispositivos desde ficheros...");
+        try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "r")) {
+            while (raf.getFilePointer() < raf.length()) {
+                int id = raf.readInt();
+                String marca = raf.readUTF().trim();
+                String modelo = raf.readUTF().trim();
+                boolean estado = raf.readBoolean();
+                int tipo = raf.readInt();
+                boolean borrado = raf.readBoolean();
+                int idAjeno = raf.readInt();
+    
+                if (!borrado) {
+                    Dispositivo d;
+                    if (tipo == 1) { // Ordenador
+                        d = new Ordenador(id);
+                        d.load(id);
+                    } else if (tipo == 2) { // Impresora
+                        d = new Impresora(id);
+                        d.load(id);
+                    } else { // Dispositivo genérico
+                        d = new Dispositivo(id);
+                    }
+    
+                    // 🔹 Asignamos las variables leídas a los objetos
+                    d.setMarca(marca);
+                    d.setModelo(modelo);
+                    d.setEstado(estado);
+                    d.setIdAjeno(idAjeno);
+    
+                    listaDispositivos.add(d);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("No se encontraron dispositivos guardados.");
+        }
     }
 
     private static void añadirDispositivo() {

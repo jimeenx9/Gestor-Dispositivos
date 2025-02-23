@@ -15,7 +15,7 @@ public class Main {
     private static void menúPrincipal() {
         int opcion;
         do {
-            System.out.println("\nMENÚ PRINCIPAL");
+            System.out.println("\n     MENÚ PRINCIPAL");
             System.out.println("1. Añadir dispositivo");
             System.out.println("2. Mostrar dispositivos");
             System.out.println("3. Buscar dispositivo");
@@ -23,6 +23,7 @@ public class Main {
             System.out.println("5. Cambiar estado dispositivo");
             System.out.println("6. Modificar dispositivo");
             System.out.println("0. Salir");
+            System.out.println();
             System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
             scanner.nextLine();
@@ -41,6 +42,9 @@ public class Main {
     }
 
     private static void cargarDatos() {
+        System.out.println();
+        System.out.println();
+        System.out.println();
         System.out.println("Cargando dispositivos desde ficheros...");
         try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "r")) {
             while (raf.getFilePointer() < raf.length()) {
@@ -54,17 +58,16 @@ public class Main {
     
                 if (!borrado) {
                     Dispositivo d;
-                    if (tipo == 1) { // Ordenador
+                    if (tipo == 1) { 
                         d = new Ordenador(id);
                         d.load(id);
-                    } else if (tipo == 2) { // Impresora
+                    } else if (tipo == 2) { 
                         d = new Impresora(id);
                         d.load(id);
-                    } else { // Dispositivo genérico
+                    } else { 
                         d = new Dispositivo(id);
                     }
-    
-                    // 🔹 Asignamos las variables leídas a los objetos
+                    System.out.println();
                     d.setMarca(marca);
                     d.setModelo(modelo);
                     d.setEstado(estado);
@@ -77,6 +80,7 @@ public class Main {
             System.out.println("No se encontraron dispositivos guardados.");
         }
     }
+    
 
     private static void añadirDispositivo() {
         System.out.print("Ingrese tipo (1=Ordenador, 2=Impresora): ");
@@ -126,14 +130,19 @@ public class Main {
         
         listaDispositivos.add(dispositivo);
         dispositivo.save();
+        System.out.println();
         System.out.println("Dispositivo añadido correctamente.");
+        System.out.println();
     }
 
     private static void mostrarDispositivos() {
         if (listaDispositivos.isEmpty()) {
+            System.out.println();
             System.out.println("No hay dispositivos registrados.");
+            System.out.println();
         } else {
             for (Dispositivo d : listaDispositivos) {
+                System.out.println();
                 System.out.println(d.toString().replace(". ", "\n"));
                 System.out.println();
 
@@ -142,22 +151,35 @@ public class Main {
     }
 
     private static void buscarDispositivo() {
+        System.out.println();
         System.out.print("Ingrese ID del dispositivo: ");
+        System.out.println();
         int id = scanner.nextInt();
         scanner.nextLine();
+
+        System.out.println();
+        System.out.println("IDs Disponibles en la lista de los Dispositivos:");
+        
+        for (Dispositivo d : listaDispositivos) {
+            System.out.println();
+            System.out.println("ID: " + d.getId() + ", Marca: " + d.getMarca());
+        }
+
         for (Dispositivo d : listaDispositivos) {
             if (d.getId() == id) {
-                System.out.println(d.toString().replace(". ", "\n"));
                 System.out.println();
-
+                System.out.println(d.toString().replace(". ", "\n"));
                 return;
             }
         }
-        System.out.println("Dispositivo no encontrado.");
+        System.out.println("El dispositivo que buscabas no se ha encontrado.");
     }
+    
 
     private static void borrarDispositivo() {
+        System.out.println();
         System.out.print("Ingrese ID del dispositivo a borrar: ");
+        System.out.println();
         int id = scanner.nextInt();
         scanner.nextLine();
         for (Dispositivo d : listaDispositivos) {
@@ -179,7 +201,9 @@ public class Main {
             if (d.getId() == id) {
                 d.setEstado(!d.isEstado());
                 d.save();
+                System.out.println();
                 System.out.println("Estado actualizado.");
+                System.out.println();
                 return;
             }
         }
@@ -187,16 +211,21 @@ public class Main {
     }
 
     private static void modificarDispositivo() {
+        System.out.println();
         System.out.print("Ingrese ID del dispositivo a modificar: ");
+        System.out.println();
         int id = scanner.nextInt();
         scanner.nextLine();
         for (Dispositivo d : listaDispositivos) {
             if (d.getId() == id) {
+                System.out.println();
                 System.out.print("Nueva marca: ");
                 d.setMarca(scanner.nextLine());
+                System.out.println();
                 System.out.print("Nuevo modelo: ");
                 d.setModelo(scanner.nextLine());
                 d.save();
+                System.out.println();
                 System.out.println("Dispositivo actualizado.");
                 return;
             }

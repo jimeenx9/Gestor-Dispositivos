@@ -65,7 +65,12 @@ public class Dispositivo {
         try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "r")) {
             while (raf.getFilePointer() < raf.length()) {
                 int id = raf.readInt();
-                raf.seek(raf.getFilePointer() + 40); // Saltamos los demás atributos
+                raf.readUTF(); // Marca
+                raf.readUTF(); // Modelo
+                raf.readBoolean(); // Estado
+                raf.readInt(); // Tipo
+                raf.readBoolean(); // Borrado
+                raf.readInt(); // idAjeno
                 if (id > maxId) maxId = id;
             }
         } catch (IOException e) {

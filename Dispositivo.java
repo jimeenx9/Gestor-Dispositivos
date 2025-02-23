@@ -56,6 +56,11 @@ public class Dispositivo {
     
     // Método para obtener el nuevo ID sumando 1 al mayor existente
     protected static int obtenerNuevoId() {
+        File archivo = new File("dispositivos.dat");
+        if (!archivo.exists()) {
+            return 1; // Si el archivo no existe, el primer ID será 1
+        }
+    
         int maxId = 0;
         try (RandomAccessFile raf = new RandomAccessFile("dispositivos.dat", "r")) {
             while (raf.getFilePointer() < raf.length()) {
@@ -64,10 +69,11 @@ public class Dispositivo {
                 if (id > maxId) maxId = id;
             }
         } catch (IOException e) {
-            System.out.println("No se pudo leer el archivo para obtener el ID.");
+            System.out.println("Error al obtener el ID: " + e.getMessage());
         }
         return maxId + 1;
     }
+    
     
     // Método para guardar el dispositivo en el archivo
     public int save() {
